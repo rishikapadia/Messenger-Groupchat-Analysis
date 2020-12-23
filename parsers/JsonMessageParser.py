@@ -1,8 +1,7 @@
-from __future__ import division
 import glob, json
 
 
-INPUT_FILES = "input/*.json"
+INPUT_FILENAMES_REGEX = "*.json"
 
 # JSON field names
 PARTICIPANTS = "participants"
@@ -11,13 +10,14 @@ PARTICIPANT_NAME = "name"
 
 
 class JsonMessageParser:
-    def __init__(self):
+    def __init__(self, input_directory_path):
+        self.input_directory_path = input_directory_path
         return
 
     def parse_message_data(self):
     	all_messages = []
     	all_participants = []
-    	filenames = glob.glob(INPUT_FILES)
+    	filenames = glob.glob(self.input_directory_path + INPUT_FILENAMES_REGEX)
     	for filename in filenames:
     		with open(filename) as json_data:
     			data = json.load(json_data)
