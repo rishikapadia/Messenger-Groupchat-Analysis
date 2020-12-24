@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from parsers.JsonMessageParser import JsonMessageParser
 from wordclouds.WordCloudGenerator import WordCloudGenerator
+from messagestats.AggregatedMessageAnalyzer import AggregatedMessageAnalyzer
 import os
 
 # from IPython import embed; embed() # TODO remove after done debugging
-# import datetime, json
 # import threading, urllib2, time
 # import numpy as np
 # import sys, os, IPython, httplib
@@ -25,7 +25,13 @@ class GroupchatAnalyzer:
 
         print("Parsing messages...")
         self.messages, self.participants = JsonMessageParser(INPUT_DIRECTORY).parse_message_data()
-        print("Found " + str(len(self.messages)) + " messages, ", str(len(self.participants)) + " participants")
+
+        print("Generating statistics...")
+        AggregatedMessageAnalyzer(OUTPUT_DIRECTORY).generate_stats(self.messages, self.participants)
+
+        # Specific messages
+        # Time series
+        # Bar chart
 
         print("Generating word clouds...")
         WordCloudGenerator(OUTPUT_DIRECTORY).generate_wordclouds(self.messages)
