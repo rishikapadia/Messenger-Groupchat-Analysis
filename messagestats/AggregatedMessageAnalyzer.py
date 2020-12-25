@@ -106,16 +106,22 @@ class AggregatedMessageAnalyzer:
                 self.__write_data(str(len(top_reacted_messages[i])) \
                     + " messages with " + str(i) + " reactions")
 
-        if (num_participants - 1) not in top_reacted_messages:
-            return
-        
+        if (num_participants - 1) in top_reacted_messages:
+            self.__publish_stats_on_top_reacted_messages(messages, top_reacted_messages[num_participants - 1], num_participants)
+
+        if (num_participants - 2) in top_reacted_messages:
+            self.__publish_stats_on_almost_top_reacted_messages(messages, top_reacted_messages[num_participants - 2], num_participants)
+
+
+    # Messages with (n-1) reacts
+    def __publish_stats_on_top_reacted_messages(self, messages, top_reacted_messages, num_participants):
         # Out of the ones with (num_participants - 1) reactions, how many had the sender give a reaction?
-        self_reacted = [m for m in top_reacted_messages[num_participants - 1] if m[SENDER_NAME] in [r[ACTOR] for r in m[REACTIONS]]]
+        self_reacted = [m for m in top_reacted_messages if m[SENDER_NAME] in [r[ACTOR] for r in m[REACTIONS]]]
         self.__write_data("\n" + str(len(self_reacted)) + " messages with " + str(num_participants - 1) \
             + " reactions where the sender also reacted.")
 
         # Out of the ones with (num_participants - 1) reactions, how many were all the same reaction?
-        same_max_reactions = [m for m in top_reacted_messages[num_participants - 1] if len(set([r[REACTION] for r in m[REACTIONS]])) == 1]
+        same_max_reactions = [m for m in top_reacted_messages if len(set([r[REACTION] for r in m[REACTIONS]])) == 1 and m not in self_reacted]
         self.__write_data("Out of the messages with " + str(num_participants - 1) \
             + " reactions, " + str(len(same_max_reactions)) + " had the same reaction.")
         self.__write_data("Of those, \n" \
@@ -140,6 +146,20 @@ class AggregatedMessageAnalyzer:
                     self.__write_data(str(i+1) + ". ERROR no text messages sent prior to this message")
                     continue
                 self.__write_data(str(i+1) + ". \"" + messages[index_in_list][MESSAGE_CONTENT] + "\"")
+
+
+    # Messages with (n-2) reacts
+    def __publish_stats_on_almost_top_reacted_messages(self, all_messages, almost_top_messages, num_participants):
+        # any self reacts? exclude from this list
+        self_reacted = [m for m in almost_top_messages if m[SENDER_NAME] in [r[ACTOR] for r in m[REACTIONS]]]
+        self.__write_data("\n\nOut of the messages with " + str(num_participants - 2) + " reactions, " \
+            + str(len(self_reacted)) + " self-reacts")
+        
+        # Who wrote the message, % by participant
+        self.__write_data("\nNumber of messages with " + str(num_participants - 2) + " reacts, by sender:")
+        count_by_sender = Counter([m[SENDER_NAME] for m in almost_top_messages if m not in self_reacted])
+        for person, count in count_by_sender.most_common(num_participants):
+            self.__write_data(str(person) + ": " + str(count))
 
 
     def __write_data(self, text):
