@@ -2,6 +2,8 @@
 from parsers.JsonMessageParser import JsonMessageParser
 from wordclouds.WordCloudGenerator import WordCloudGenerator
 from messagestats.AggregatedMessageAnalyzer import AggregatedMessageAnalyzer
+from graphers.BarGraphsGenerator import BarGraphsGenerator
+from graphers.TimeSeriesGenerator import TimeSeriesGenerator
 import os
 
 # from IPython import embed; embed() # TODO remove after done debugging
@@ -29,9 +31,11 @@ class GroupchatAnalyzer:
         print("Generating statistics...")
         AggregatedMessageAnalyzer(OUTPUT_DIRECTORY).generate_stats(self.messages, self.participants)
 
-        # Specific messages
-        # Time series
-        # Bar chart
+        print("Generating bar graphs...")
+        BarGraphsGenerator(OUTPUT_DIRECTORY).generate_graphs(self.messages)
+
+        print("Generating time series graphs...")
+        TimeSeriesGenerator(OUTPUT_DIRECTORY).generate_graphs(self.messages)
 
         print("Generating word clouds...")
         WordCloudGenerator(OUTPUT_DIRECTORY).generate_wordclouds(self.messages)
