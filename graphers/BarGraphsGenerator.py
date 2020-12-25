@@ -8,6 +8,7 @@ import os
 
 OUTPUT_DIRECTORY = "graphs/"
 OUTPUT_FILE_FORMAT = ".png"
+TOP_REACTIONS_GRAPH_OUTPUT_FILENAME = "top_reactions_per_person.txt"
 
 # JSON field names
 SENDER_NAME = "sender_name"
@@ -158,3 +159,9 @@ class BarGraphsGenerator:
         fig.tight_layout()
         plt.savefig(self.output_directory_path + "top_reactions_per_person" + OUTPUT_FILE_FORMAT, \
             format="png", bbox_inches="tight")
+
+        # Since reactions don't show up with the apple font in matplotlib, include the emojis in a file
+        self.file = open(self.output_directory_path + TOP_REACTIONS_GRAPH_OUTPUT_FILENAME, "w")
+        for i, person in enumerate(bar_reactions_per_person):
+            self.file.write(x_labels[i] + ": " + str(person[:5]) + '\n')
+        self.file.close()
