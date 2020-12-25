@@ -2,6 +2,7 @@ from datetime import datetime
 from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
+import unicodedata as ud
 import os
 
 
@@ -16,6 +17,7 @@ REACTION = "reaction"
 ACTOR = "actor"
 
 TOP_REACTIONS_PER_PERSON = 5
+BAR_GROUP_MARGIN = 0.2
 
 
 class BarGraphsGenerator:
@@ -47,17 +49,6 @@ class BarGraphsGenerator:
         count_by_person = Counter(count_by_person).most_common()
         self.__volume_bar_plot_helper("reactions_per_person", count_by_person, len(messages), \
             "Number of reactions per person", "Number of Reactions")
-
-
-    def __plot_top_reactions_per_person(self, messages):
-        reactions_per_person = self.__get_reactions_per_person(messages)
-        
-        top_reactions_per_person = {}
-        for person in reactions_per_person:
-            top_reactions_per_person[person] = Counter(reactions_per_person[person]).most_common(TOP_REACTIONS_PER_PERSON)
-        
-        from IPython import embed; embed() # TODO remove after done debugging
-        # Per person, number (and %?) of top 3 (or 5?) reactions given
 
 
     def __get_reactions_per_person(self, messages):
@@ -110,4 +101,60 @@ class BarGraphsGenerator:
 
         figure.tight_layout()
         plt.savefig(self.output_directory_path + filename + OUTPUT_FILE_FORMAT, \
+            format="png", bbox_inches="tight")
+
+
+    def __plot_top_reactions_per_person(self, messages):
+        reactions_per_person = self.__get_reactions_per_person(messages)
+        
+        top_reactions_per_person = {}
+        for person in reactions_per_person:
+            top_reactions_per_person[person] = Counter(reactions_per_person[person]).most_common()
+
+        x_labels = list(top_reactions_per_person.keys())
+        x_labels.sort()
+
+        y_values, bar_reactions_per_person = [], []
+        for person in x_labels:
+            reactions_counts = top_reactions_per_person[person]
+            bar_reactions_per_person.append([reaction.encode('latin1').decode('utf8') for reaction, count in reactions_counts])
+
+            # normalize counts by person
+            total_reactions_per_person = np.array([count for reaction, count in reactions_counts])
+            y_values.append(total_reactions_per_person / sum(total_reactions_per_person))
+
+        bar_width = (1 - BAR_GROUP_MARGIN) / TOP_REACTIONS_PER_PERSON  # the width of each bar
+        x_locations = [(np.arange(len(x_labels)) + x * bar_width) for x in range(TOP_REACTIONS_PER_PERSON)]  # the bar locations
+
+        fig, ax = plt.subplots()
+        fig.set_size_inches(8, 4.5)
+        ax.spines["right"].set_visible(False)
+        ax.spines["top"].set_visible(False)
+
+        ax.set_title("Top Reactions per Person")
+        ax.set_ylabel("% of Reactions (per Person)")
+        ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:.0%}".format(x)))
+        ax.set_xticks(x_locations[0] + (1 - BAR_GROUP_MARGIN - bar_width) / 2)
+        ax.set_xticklabels(x_labels, rotation=75)
+
+        def replace_unsupported_emojis(emoji):
+            if emoji == '👍':
+                return 'U'
+            if emoji == '👎':
+                return 'D'
+            return emoji
+
+        for index in range(TOP_REACTIONS_PER_PERSON):
+            rects = ax.bar(x_locations[index], [reactions[index] for reactions in y_values], bar_width)
+            labels_per_bar = [replace_unsupported_emojis(person[index]) for person in bar_reactions_per_person]
+            for i, rect in enumerate(rects.get_children()):
+                height = rect.get_height()
+                ax.annotate(labels_per_bar[i], \
+                    xy=(rect.get_x() + rect.get_width() / 2, height), \
+                    xytext=(0, 3), \
+                    textcoords="offset points", \
+                    ha="center", va="bottom")
+
+        fig.tight_layout()
+        plt.savefig(self.output_directory_path + "top_reactions_per_person" + OUTPUT_FILE_FORMAT, \
             format="png", bbox_inches="tight")

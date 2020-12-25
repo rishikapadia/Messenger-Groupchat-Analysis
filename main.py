@@ -6,7 +6,7 @@ from graphers.BarGraphsGenerator import BarGraphsGenerator
 from graphers.TimeSeriesGenerator import TimeSeriesGenerator
 import os
 
-# from IPython import embed; embed() # TODO remove after done debugging
+# from IPython import embed; embed(); sys.exit(0) # TODO remove after done debugging
 # import threading, urllib2, time
 # import numpy as np
 # import sys, os, IPython, httplib
