@@ -52,5 +52,6 @@ ENV/
 input/*
 output/*
 chat analysis notes.txt
+*.pptx
 
 

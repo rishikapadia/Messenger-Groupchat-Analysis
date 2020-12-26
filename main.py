@@ -35,7 +35,8 @@ class GroupchatAnalyzer:
 
         print("Generating word clouds...")
         WordCloudGenerator(OUTPUT_DIRECTORY).generate_wordclouds(self.messages)
-        print("Done generating word clouds")
+
+        print("Done!")
 
 
 
