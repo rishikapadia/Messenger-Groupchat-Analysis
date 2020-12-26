@@ -19,7 +19,7 @@ This project is to provide interesting statistics about a group chat in Facebook
 
     vii.) After you get a notification that the download is complete, download and extract the JSON files for that group chats that you want to analyze. Delete the other files (media, etc.).
 
-    viii.) Put all the JSON messages you want to analyze as an aggregate into `input/`. If you are combining messages from multiple chats, make sure to rename those files so they don't override each other. The names of the JSON files in `input/` don't matter, we will combine them based on the timestamp and other message properties.
+    viii.) Put all the JSON messages you want to analyze as an aggregate into a new directory called `input/` in the project root level (inside the folder that contains `main.py`). If you are combining messages from multiple chats, make sure to rename those files so they don't override each other. The names of the JSON files in `input/` don't matter, we will combine them based on the timestamp and other message properties.
 
 3. In the terminal, run `$ <file_path>/main.py`. If you don't want to make that file executable (using chmod), run `$ python3 main.py`
 4. Check out the `output/` directory for word clouds, graphs, and other statistics.
