@@ -35,4 +35,6 @@ Most of the images and statistics in `output/` can be used directly in a present
 
 3. Similar to #2, I included a sample message in `output/statistics/statistics.txt` for the day with the most messages so that I can search and revisit it. The idea was to screenshot messages from that day manually, to summarize why we made so many messages that day. Again, #2 and #3 may not be relevant for most other group chats.
 
-4. For the sake of time, this tool was built for my one group thread's use case. I built it with generic group threads and privacy concerns in mind, but it has not been tested on other group threads, and some logic may not take edge conditions into account. If you have any issues analyzing your chat thread, please reach out to me or submit a PR.
+4. The word clouds ignore emojis and words with contractions. I was unable to get these types of words to be displayed on the word cloud, so my workaround was to exclude them.
+
+5. For the sake of time, this tool was built for my one group thread's use case. I built it with generic group threads and privacy concerns in mind, but it has not been tested on other group threads, and some logic may not take edge conditions into account. If you have any issues analyzing your chat thread, please reach out to me or submit a PR.
