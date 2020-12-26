@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 from collections import Counter
 import os
@@ -25,7 +26,6 @@ class TimeSeriesGenerator:
             os.makedirs(self.output_directory_path)
 
         # Time series:
-        # - Time series of messages (bucket size = 1 month? window-size averaging?)
         # - Time series by person % of bucket
 
         self.__plot_message_volume(messages)
@@ -61,7 +61,7 @@ class TimeSeriesGenerator:
         axes.set_title("# of Messages Per Month")
         axes.set_ylabel("Messages Per Month")
         axes.set_xticks(x_indices)
-        axes.set_xticklabels(x_labels, rotation=75)
+        axes.set_xticklabels(x_labels, rotation=90)
 
         axes.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
 
@@ -71,8 +71,28 @@ class TimeSeriesGenerator:
         plt.savefig(self.output_directory_path + "messages_time_series" + OUTPUT_FILE_FORMAT, \
             format="png", bbox_inches="tight")
 
+        # Add circles/annotations for the min and max months
+        most_count, least_count = counts[0], counts[-1]
+
+        def add_marker(date, value, color):
+            x_index = delta_months(date)
+            oval = Ellipse((x_index, value), 1, 400, color=color, fill=False)
+            axes.add_artist(oval)
+            axes.annotate('{:,}'.format(value), \
+                xy=(x_index, value), \
+                xytext=(0, 6), \
+                textcoords="offset points", \
+                color=color, \
+                ha="center", va="bottom")
+
+        add_marker(most_count[0], most_count[1], 'g')
+        add_marker(least_count[0], least_count[1], 'r')
+
+        plt.savefig(self.output_directory_path + "messages_time_series_min_max" + OUTPUT_FILE_FORMAT, \
+            format="png", bbox_inches="tight")
+
 
     def __plot_person_percentage_volume(self, messages):
-        #from IPython import embed; embed();
-        sys.exit(0) # TODO remove after done debugging
+        # from IPython import embed; embed();
+        import sys; sys.exit(0) # TODO remove after done debugging
         pass
