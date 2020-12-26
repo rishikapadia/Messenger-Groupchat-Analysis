@@ -5,11 +5,7 @@ from messagestats.AggregatedMessageAnalyzer import AggregatedMessageAnalyzer
 from graphers.BarGraphsGenerator import BarGraphsGenerator
 from graphers.TimeSeriesGenerator import TimeSeriesGenerator
 import os
-
-# from IPython import embed; embed(); sys.exit(0) # TODO remove after done debugging
-# import threading, urllib2, time
-# import numpy as np
-# import sys, os, IPython, httplib
+# from IPython import embed; embed(); import sys; sys.exit(0) # For debugging
 
 
 # Input/output filepaths
