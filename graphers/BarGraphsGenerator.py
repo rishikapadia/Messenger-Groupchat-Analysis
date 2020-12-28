@@ -49,7 +49,7 @@ class BarGraphsGenerator:
             count_by_person[person] = len(reactions_per_person[person])
         count_by_person = Counter(count_by_person).most_common()
         self.__volume_bar_plot_helper("reactions_per_person", count_by_person, len(messages), \
-            "Number of reactions per person", "Number of Reactions")
+            "Number of Reactions Given, by Person", "Number of Reactions Given")
 
 
     def __get_reactions_per_person(self, messages):
@@ -132,7 +132,7 @@ class BarGraphsGenerator:
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
 
-        ax.set_title("Top Reactions per Person")
+        ax.set_title("Top Reactions Given, by Person")
         ax.set_ylabel("% of Reactions (per Person)")
         ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:.0%}".format(x)))
         ax.set_xticks(x_locations[0] + (1 - BAR_GROUP_MARGIN - bar_width) / 2)
