@@ -128,9 +128,16 @@ class AggregatedMessageAnalyzer:
             + str(len([a for a in same_max_reactions if MESSAGE_CONTENT in a])) + " were text, \n" \
             + str(len([a for a in same_max_reactions if VIDEOS in a])) + " were videos, \n" \
             + str(len([a for a in same_max_reactions if PHOTOS in a])) + " were photos, and \n" \
-            + str(len([a for a in same_max_reactions if GIFS in a])) + " were gifs.\n") \
+            + str(len([a for a in same_max_reactions if GIFS in a])) + " were gifs.\n")
 
-        self.__write_data("\nHere are those messages, or the message right before so we can search for it:")
+        # Get rankings for (num_participants - 1) reactions that were all the same react
+        self.__write_data("For the messages with " + str(num_participants - 1) + " of the same reaction:")
+        same_max_reactions_by_person = Counter([m[SENDER_NAME] for m in same_max_reactions])
+        for person, count in same_max_reactions_by_person.most_common(num_participants):
+            self.__write_data(str(person) + ": " + str(count))
+
+        # Get those messages
+        self.__write_data("\nHere are those messages, or one of the messages right after so we can search for it:")
         for i, message in enumerate(same_max_reactions):
             if MESSAGE_CONTENT in message:
                 self.__write_data(str(i+1) + ". Text: \"" + message[MESSAGE_CONTENT] + "\"")
@@ -146,6 +153,13 @@ class AggregatedMessageAnalyzer:
                     self.__write_data(str(i+1) + ". ERROR no text messages sent prior to this message")
                     continue
                 self.__write_data(str(i+1) + ". \"" + messages[index_in_list][MESSAGE_CONTENT] + "\"")
+
+        # Get rankings for (num_participants - 1) reactions that were NOT all the same react
+        self.__write_data("\n\nFor the messages with " + str(num_participants - 1) + " of not all the same reactions:")
+        different_max_reactions = [m for m in top_reacted_messages if len(set([r[REACTION] for r in m[REACTIONS]])) > 1 and m not in self_reacted]
+        different_max_reactions_by_person = Counter([m[SENDER_NAME] for m in different_max_reactions])
+        for person, count in different_max_reactions_by_person.most_common(num_participants):
+            self.__write_data(str(person) + ": " + str(count))
 
 
     # Messages with (n-2) reacts
